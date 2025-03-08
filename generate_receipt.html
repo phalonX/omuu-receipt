@@ -200,6 +200,10 @@
       doc.setFontSize(14);
       doc.text(`Grand Total: Rp. ${formatNumber(grandTotal)}`, 10, yPos + 10);
 
+      // Add information about payment
+      doc.setFontSize(14);
+      doc.text(`Pembayaran bisa ditransfer ke BCA 7735114247 an Elissya`);
+
       // Save the PDF
       doc.save('receipt.pdf');
     }
