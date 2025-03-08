@@ -188,6 +188,12 @@
         xPos += columnWidths[3];
         doc.text(`Rp. ${formatNumber(item.total)}`, xPos, yPos); // Total
         yPos += 10;
+
+        // Check if yPos exceeds the page height and add a new page if necessary
+        if (yPos > 280) { // Assuming A4 page height is 297mm, leaving some margin
+          doc.addPage();
+          yPos = 20; // Reset yPos for the new page
+        }
       });
 
       // Add delivery fee
