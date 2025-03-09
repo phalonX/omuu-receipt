@@ -71,6 +71,8 @@
 <body>
   <div class="container">
     <h1>Receipt Generator</h1>
+
+    <!-- Item Input Fields -->
     <div class="input-group">
       <label for="itemName">Item Name:</label>
       <input type="text" id="itemName" placeholder="Enter item name">
@@ -85,11 +87,19 @@
     </div>
     <button class="add-item" onclick="addItem()">Add Item</button>
 
+    <!-- Customer Name Input -->
+    <div class="input-group">
+      <label for="customerName">Customer Name:</label>
+      <input type="text" id="customerName" placeholder="Enter customer name">
+    </div>
+
+    <!-- Delivery Fee Input -->
     <div class="input-group">
       <label for="deliveryFee">Delivery Fee:</label>
       <input type="number" id="deliveryFee" placeholder="Enter delivery fee">
     </div>
 
+    <!-- Items List -->
     <div class="items-list">
       <h2>Items Added</h2>
       <table id="itemsTable">
@@ -106,6 +116,7 @@
       </table>
     </div>
 
+    <!-- Generate Receipt Button -->
     <button class="generate-btn" onclick="generateReceipt()">Generate Receipt</button>
   </div>
 
@@ -153,13 +164,14 @@
         return;
       }
 
+      const customerName = document.getElementById('customerName').value || 'Receipt'; // Default to "Receipt" if no name is provided
       const deliveryFee = parseFloat(document.getElementById('deliveryFee').value) || 0;
       const doc = new jsPDF();
       let yPos = 20;
 
-      // Add title
+      // Add title (replace "Receipt" with customer name)
       doc.setFontSize(18);
-      doc.text('Receipt', 10, yPos);
+      doc.text(customerName, 10, yPos);
       yPos += 10;
 
       // Create table headers
@@ -180,14 +192,20 @@
         xPos = 10;
         doc.text(`${index + 1}`, xPos, yPos); // No
         xPos += columnWidths[0];
-        doc.text(item.itemName, xPos, yPos); // Item Name
+
+        // Handle long item names with text wrapping
+        const itemNameLines = doc.splitTextToSize(item.itemName, columnWidths[1]);
+        doc.text(itemNameLines, xPos, yPos); // Item Name
         xPos += columnWidths[1];
+
         doc.text(formatNumber(item.itemQuantity), xPos, yPos); // Quantity
         xPos += columnWidths[2];
+
         doc.text(`Rp. ${formatNumber(item.itemPrice)}`, xPos, yPos); // Price per Item
         xPos += columnWidths[3];
+
         doc.text(`Rp. ${formatNumber(item.total)}`, xPos, yPos); // Total
-        yPos += 10;
+        yPos += 10 * itemNameLines.length; // Adjust yPos based on the number of lines
 
         // Check if yPos exceeds the page height and add a new page if necessary
         if (yPos > 280) { // Assuming A4 page height is 297mm, leaving some margin
